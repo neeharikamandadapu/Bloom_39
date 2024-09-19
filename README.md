@@ -1,2 +1,2 @@
-# CSE360_Neeharika
+# CSE360_thursday
 In Class Tutorial
