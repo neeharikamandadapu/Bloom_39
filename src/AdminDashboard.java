@@ -29,70 +29,82 @@ import javafx.stage.Stage;
  */
 public class AdminDashboard {
 
-    private Stage primaryStage;  // Reference to the primary stage of the application
+    private Stage primaryStage;
 
-    /**
-     * Constructor to initialize the AdminDashboard with the given stage.
-     */
+
     public AdminDashboard(Stage primaryStage) {
         this.primaryStage = primaryStage;
+ 
     }
 
-    /**
-     * This method sets up the Admin Dashboard layout and displays it.
-     * It includes buttons for various admin functionalities and sets their respective actions.
-     */
     public void show() {
-        // Create a VBox layout with spacing, padding, and center alignment
         VBox adminLayout = new VBox(10);
         adminLayout.setPadding(new Insets(20));
         adminLayout.setAlignment(Pos.CENTER);
         adminLayout.setStyle("-fx-background-color: #FFFFFF;");
 
-        // Add a label for the dashboard title
         Label appNameLabel = new Label("Admin Dashboard");
         appNameLabel.setStyle("-fx-font-size: 24px;");
 
-        // Button to invite a new user
         Button inviteUserButton = new Button("Invite User");
         inviteUserButton.setOnAction(e -> {
             InviteUserPage inviteUserPage = new InviteUserPage(primaryStage);
             inviteUserPage.show();
         });
 
-        // Button to reset a user (not yet implemented)
         Button resetUserButton = new Button("Reset User");
-        resetUserButton.setOnAction(e -> System.out.println("Reset User Pressed"));
+        resetUserButton.setOnAction(e -> {
+            ResetPasswordPage resetPasswordPage = new ResetPasswordPage(primaryStage);
+            resetPasswordPage.show();
+        });
 
-        // Button to delete a user
         Button deleteUserButton = new Button("Delete User");
         deleteUserButton.setOnAction(e -> {
             DeleteUserPage deleteUserPage = new DeleteUserPage(primaryStage);
             deleteUserPage.show();
         });
 
-        // Button to add or remove a user's role
         Button addRemoveRoleButton = new Button("Add/Remove Role");
         addRemoveRoleButton.setOnAction(e -> {
             AddRemoveRolePage addRemoveRolePage = new AddRemoveRolePage(primaryStage);
             addRemoveRolePage.show();
         });
 
-        // Button to list all users
         Button listUsersButton = new Button("List all users");
         listUsersButton.setOnAction(e -> {
             UserListPage userListPage = new UserListPage(primaryStage);
             userListPage.show();
         });
 
-        // Button to log out of the admin dashboard
+        Button createHelpArticleButton = new Button("Create Help Article");
+        createHelpArticleButton.setOnAction(e -> {
+            // Pass the role to the CreateHelpArticlePage
+            CreateHelpArticlePage createHelpArticlePage = new CreateHelpArticlePage(primaryStage, "Admin"); // userRole should be defined in your context
+            createHelpArticlePage.show();
+        });
+        // New button to list help articles
+        Button viewHelpArticlesButton = new Button("View Help Articles");
+        viewHelpArticlesButton.setOnAction(e -> {
+            ViewHelpArticlesPage viewHelpArticlesPage = new ViewHelpArticlesPage(primaryStage, "Admin"); // Pass "Admin" as the role
+            viewHelpArticlesPage.show();
+        });
+
         Button logoutButton = new Button("Logout");
         logoutButton.setOnAction(e -> new LoginPage(primaryStage).show());
 
-        // Add all components to the layout
-        adminLayout.getChildren().addAll(appNameLabel, inviteUserButton, resetUserButton, deleteUserButton, addRemoveRoleButton, listUsersButton, logoutButton);
+        // Adding all buttons to the layout
+        adminLayout.getChildren().addAll(
+                appNameLabel,
+                inviteUserButton,
+                resetUserButton,
+                deleteUserButton,
+                addRemoveRoleButton,
+                listUsersButton,
+                createHelpArticleButton,
+                viewHelpArticlesButton,
+                logoutButton
+        );
 
-        // Set the scene and display the dashboard
         Scene adminScene = new Scene(adminLayout, 600, 400);
         primaryStage.setScene(adminScene);
         primaryStage.setTitle("Admin Dashboard");

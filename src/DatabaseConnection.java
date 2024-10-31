@@ -22,23 +22,23 @@ import java.sql.Statement;
  * 
  * @version 1.00 2024-10-09 Initial implementation of database connection and table creation.
  */
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class DatabaseConnection {
 
-    // Connection string to the SQLite database
+    // Database connection string
     private static final String URL = "jdbc:sqlite:appDatabase.db";
 
-    /**
-     * Establishes a connection to the SQLite database.
-     */
+    // Method to establish a connection to the database
     public static Connection connect() throws SQLException {
         return DriverManager.getConnection(URL);
     }
 
-    /**
-     * Creates the Users table if it does not already exist.
-     * This table stores user information such as username, password, names, email, role, 
-     * and boolean flags for admin status and setup status.
-     */
+    // Method to create the Users table
     public static void createUsersTable() {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS Users ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -55,17 +55,13 @@ public class DatabaseConnection {
 
         try (Connection conn = connect();
              Statement stmt = conn.createStatement()) {
-            stmt.execute(createTableSQL);  // Execute the SQL command to create the Users table
+            stmt.execute(createTableSQL);
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace if there is a database error
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Creates the Invitations table if it does not already exist.
-     * This table handles the storage of user invitations, including the username, email,
-     * invitation code, role, and whether the invitation has been used.
-     */
+    // Method to create the Invitations table
     public static void createInvitationsTable() {
         String createTableSQL = "CREATE TABLE IF NOT EXISTS Invitations ("
                 + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -77,25 +73,23 @@ public class DatabaseConnection {
 
         try (Connection conn = connect();
              Statement stmt = conn.createStatement()) {
-            stmt.execute(createTableSQL);  // Execute the SQL command to create the Invitations table
+            stmt.execute(createTableSQL);
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace if there is a database error
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Initializes the database by creating the required tables (Users and Invitations).
-     * This method is typically called when the application starts to ensure that all tables are present.
-     */
+    // Method to initialize all required tables (Users and Invitations)
     public static void initializeDatabase() {
         try (Connection conn = connect()) {
             if (conn != null) {
-                createUsersTable();  // Create the Users table
-                createInvitationsTable();  // Create the Invitations table
+                createUsersTable();
+                createInvitationsTable();
                 System.out.println("Database initialization complete.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace if there is a database error
+            e.printStackTrace();
         }
     }
+
 }

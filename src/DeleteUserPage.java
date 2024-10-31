@@ -26,68 +26,65 @@ import java.sql.SQLException;
  *  
  * @version 1.00 2024-10-09 Initial implementation of user deletion functionality.
  */
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 public class DeleteUserPage {
 
-    private Stage primaryStage;  // Field for the primary stage
+    private Stage primaryStage;
 
-    /**
-     * Constructor that sets the primary stage for this page.
-     */
     public DeleteUserPage(Stage primaryStage) {
         this.primaryStage = primaryStage;
     }
 
-    /**
-     * Displays the delete user page with input fields and buttons.
-     * This method sets up the UI layout for deleting a user.
-     */
     public void show() {
         VBox layout = new VBox(10);  // VBox layout for vertical alignment with 10px spacing
-        layout.setPadding(new Insets(20));  // Add padding around the layout
-        layout.setAlignment(Pos.CENTER);  // Center all elements
-        layout.setStyle("-fx-background-color: #FFFFFF;");  // Set background color
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-background-color: #FFFFFF;");
 
-        // Label for the page title
         Label titleLabel = new Label("Delete User");
-        titleLabel.setStyle("-fx-font-size: 24px;");  // Set font size for the title
+        titleLabel.setStyle("-fx-font-size: 24px;");
 
-        // Text field for entering the username of the user to be deleted
         TextField usernameField = new TextField();
         usernameField.setPromptText("Enter Username to Delete");
 
-        // Button for confirming user deletion
         Button deleteButton = new Button("Delete");
 
-        // Set the action for the delete button
+        // Set action for the delete button
         deleteButton.setOnAction(e -> handleDeleteUser(usernameField.getText()));
 
-        // Button for going back to the Admin Dashboard
+        // Add back button to return to Admin Dashboard
         Button backButton = new Button("Back to Admin Dashboard");
         backButton.setOnAction(e -> {
-            AdminDashboard adminDashboard = new AdminDashboard(primaryStage);  // Navigate back to the admin dashboard
+            AdminDashboard adminDashboard = new AdminDashboard(primaryStage);
             adminDashboard.show();
         });
 
-        // Add all components (title, input field, buttons) to the layout
+        // Add components to layout
         layout.getChildren().addAll(titleLabel, usernameField, deleteButton, backButton);
 
-        // Set up the scene and show it
         Scene scene = new Scene(layout, 600, 400);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Delete User");
         primaryStage.show();
     }
 
-    /**
-     * Handles the deletion process by validating input and confirming the action.
-     */
     private void handleDeleteUser(String username) {
-        if (username.isEmpty()) {  // Check if the username field is empty
-            showAlert("Input Error", "Please enter a username.");  // Show error if no username is provided
+        if (username.isEmpty()) {
+            showAlert("Input Error", "Please enter a username.");
             return;
         }
 
-        // Show a confirmation dialog before deleting the user
+        // Show a confirmation dialog
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirm Deletion");
         confirmAlert.setHeaderText("Are you sure?");
@@ -96,44 +93,38 @@ public class DeleteUserPage {
         // Handle the result of the confirmation dialog
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                // If the user confirms, proceed with deletion
+                // If confirmed, delete the user from the database
                 deleteUserFromDatabase(username);
             } else {
-                // If the user cancels, show a message and do nothing
+                // If Cancelled, do nothing
                 showAlert("Cancelled", "User deletion cancelled.");
             }
         });
     }
 
-    /**
-     * Deletes the user from the database based on the provided username.
-     */
     private void deleteUserFromDatabase(String username) {
-        String deleteQuery = "DELETE FROM Users WHERE username = ?";  // SQL query for deleting a user
+        String deleteQuery = "DELETE FROM Users WHERE username = ?";
 
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
-            stmt.setString(1, username);  // Set the username parameter in the query
+            stmt.setString(1, username);
 
-            int rowsAffected = stmt.executeUpdate();  // Execute the query and get the number of affected rows
+            int rowsAffected = stmt.executeUpdate();
             if (rowsAffected > 0) {
-                showAlert("Success", "User deleted successfully.");  // Show success message if deletion was successful
+                showAlert("Success", "User deleted successfully.");
             } else {
-                showAlert("Error", "User not found.");  // Show error if the user was not found in the database
+                showAlert("Error", "User not found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert("Database Error", "An error occurred while deleting the user.");  // Show error if a database issue occurred
+            showAlert("Database Error", "An error occurred while deleting the user.");
         }
     }
 
-    /**
-     * Displays an alert dialog with the specified title and content.
-     */
     private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);  // Create an information alert
-        alert.setTitle(title);  // Set the alert's title
-        alert.setContentText(content);  // Set the alert's content message
-        alert.showAndWait();  // Display the alert and wait for the user's response
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

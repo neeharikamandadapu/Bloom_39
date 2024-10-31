@@ -18,43 +18,30 @@ import java.sql.SQLException;
  */
 public class InvitationCode {
 
-    /**
-     * Generates a 6-digit random OTP (One-Time Password) using SecureRandom.
-     * 
-     * @return a 6-digit OTP as a String, padded with zeros if necessary.
-     */
+    // Method to generate a random OTP (invitation code)
     public static String generateOTP() {
-        SecureRandom random = new SecureRandom();  // SecureRandom for cryptographic safety
-        int otp = random.nextInt(999999);  // Generate a random integer between 0 and 999999
-        return String.format("%06d", otp);  // Return the OTP as a zero-padded 6-digit string
+        SecureRandom random = new SecureRandom();
+        int otp = random.nextInt(999999);  // Generate a 6-digit random number
+        return String.format("%06d", otp);
     }
 
-    /**
-     * Invites a user by inserting their information, including a generated OTP, 
-     * into the 'Invitations' table in the database.
-     */
+    // Method to insert an invitation with a generated OTP into the Invitations table
     public static void inviteUser(String username, String email, String roles) {
-        // Generate a new OTP for the invitation
-        String otp = generateOTP();  
+        String otp = generateOTP();  // Generate OTP
 
-        // SQL statement to insert the invitation into the Invitations table
         String insertInvitationSQL = "INSERT INTO Invitations (username, email, invitation_code, role, is_used) VALUES (?, ?, ?, ?, 0)";
 
-        try (Connection conn = DatabaseConnection.connect();  // Connect to the database
+        try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(insertInvitationSQL)) {
-            // Set the values in the prepared statement
-            pstmt.setString(1, username);  // Set the username
-            pstmt.setString(2, email);  // Set the email address
-            pstmt.setString(3, otp);  // Set the generated OTP (invitation code)
-            pstmt.setString(4, roles);  // Set the roles (comma-separated if multiple)
-            pstmt.executeUpdate();  // Execute the insert statement
-
-            // Output a success message to the console
+            pstmt.setString(1, username);
+            pstmt.setString(2, email);
+            pstmt.setString(3, otp);
+            pstmt.setString(4, roles);  // Storing multiple roles as comma-separated string
+            pstmt.executeUpdate();
             System.out.println("Invitation created for " + username + " with OTP: " + otp);
 
-            // Optionally: Send the OTP via email to the user here (email functionality not implemented)
+            // Optionally: Send OTP via email to the user here (not implemented)
         } catch (SQLException e) {
-            // If there's an error with the database operation, print the stack trace
             e.printStackTrace();
         }
     }

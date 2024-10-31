@@ -21,30 +21,23 @@ import javafx.stage.Stage;
  * @version 1.00 2024-10-09 Initial implementation of the JavaFX application structure
  * 
  */
+
 public class ASUHelloWorldJavaFX extends Application {
 
-    private Stage primaryStage;  // Field to store the reference to the main stage of the application
+    private Stage primaryStage;  // Field for primary stage
 
-    /**
-     * This is the starting point of the JavaFX application. It initializes the database connection
-     * and shows the login page as the first screen.
-     */
     @Override
     public void start(Stage stage) {
-        this.primaryStage = stage;  // Assign the passed stage to the class-level field
-
-        // Initialize the database connection
+        this.primaryStage = stage;  // Assign the local parameter to the class field
         DatabaseConnection.initializeDatabase();
         
-        // Create and show the initial login screen using the primary stage
-        InitialLogin initialLogin = new InitialLogin(primaryStage);  // Use the stored primary stage
+        
+        // Show the login page initially, using the primaryStage field
+        InitialLogin initialLogin = new InitialLogin(primaryStage);  // Use primaryStage here
         initialLogin.show();
     }
 
-    /**
-     * The main method launches the JavaFX application.
-     */
     public static void main(String[] args) {
-        launch(args);  // Launch the JavaFX application
+        launch(args);
     }
 }
